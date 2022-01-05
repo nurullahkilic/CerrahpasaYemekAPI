@@ -2,10 +2,13 @@ import requests
 from flask import Flask, jsonify
 import json
 from flask_cors import CORS
-
+from datetime import datetime
+import locale
 
 app = Flask(__name__)
 CORS(app)
+
+locale.setlocale(locale.LC_ALL, "tr")
 
 
 @app.route('/')
@@ -26,6 +29,8 @@ def hello():
     for key in res["ogle"]:
 
         date = key['tarih']
+        day = datetime.strptime(date, '%d.%m.%Y').strftime(
+            '%A')  # Convert date to day
         calorie = key['kalori']
         menu = key['menu'].split("\t\n")  # Split the foods
         menu = list(
@@ -33,6 +38,7 @@ def hello():
 
         # Create JSON object for each day
         items = {
+            "day": day,
             "date": date,
             "calorie": calorie,
             "menu": menu
